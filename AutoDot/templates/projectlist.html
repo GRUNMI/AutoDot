@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+    <meta charset="UTF-8">
+    <title>项目列表</title>
+
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        .black_overlay{
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index:1001;
+            -moz-opacity: 0.8;
+            opacity:.80;
+            filter: alpha(opacity=88);
+        }
+        .white_content {
+            display: none;
+            position: absolute;
+            top: 10%;
+            left: 35%;
+            width: 20%;
+            height: 20%;
+            padding: 20px;
+            border: 0px solid black;
+            background-color: white;
+            z-index:1002;
+            overflow: auto;
+        }
+
+        li{
+            list-style: none;
+            float: left;
+            padding-right: 50px;
+        }
+    </style>
+
+</head>
+<body>
+
+<div>
+
+    <div>
+        <span id="new-project" style="cursor: pointer;size:5px;color: #00aa00;float: left" onclick="openDialog()">新增项目</span>
+        <div id="light" class="white_content" style="text-align: center">
+            <p><span style="color: red">*</span>项目名称：<input type="text" id="name"></p>
+            <input type="button" value="取消" onclick = "closeDialog()">
+            <input type="button" value="确定" onclick = "newAddProject()">
+        </div>
+        <div id="fade" class="black_overlay"></div>
+    </div>
+    <ul id="all-project">
+    {% for name in projectName %}
+        <li>
+            <div style="height: 50px;width: 240px;background-color: #aaa2a9;line-height: 25px;margin-bottom: 20px;margin-left: 100px">
+                <div style="width: 100px;float: left;text-align: center; line-height: 50px;cursor: pointer" id="projectname" name="{{ name }}" title="查看用例">{{ name }}</div>
+                <div style="width: 100px;float:left;border-left: 4px solid #c59c36;box-sizing: border-box;padding-left: 20px;">
+                    <input type="button" value="执行用例" id="runCase" style="cursor: pointer;" name={{ name }}>
+                    <input type="button" value="查看结果" id="checkResult" style="cursor: pointer" name={{ name }}>
+                </div>
+            </div>
+        </li>
+    {% endfor %}
+    </ul>
+</div>
+
+<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+    
+    function newAddProject() {
+        var projectname = $("#name").val();
+        console.log(projectname);
+        $.ajax({
+            type:"get",
+            url:"/new/add/project/",
+            data:{"projectName":projectname},
+            dataType:"text",
+            success:function (data) {
+                console.log(data);
+                // empty  alreadyExist  createSuccess
+                if (data == "empty"){
+                    alert("项目名称不能为空")
+                }
+                else if (data == "alreadyExist"){
+                    //清空弹出的输入框
+                    $("#name").val("");
+                    alert("项目已存在，不需要创建")
+                }
+                else {
+                    document.getElementById('light').style.display='none';
+                    document.getElementById('fade').style.display='none';
+                    window.location.href=("/project/list/")
+                }
+            }
+
+
+        });
+
+    }
+
+    function openDialog(){
+        $("#name").val("");
+        document.getElementById('light').style.display='block';
+        document.getElementById('fade').style.display='block';
+    }
+    function closeDialog(){
+        document.getElementById('light').style.display='none';
+        document.getElementById('fade').style.display='none';
+
+    }
+
+
+    $("#all-project").on("click","#projectname",function () {
+        var name = $(this).attr("name");
+        // 子页面给父页面传值
+        window.parent.$("#parm").val(name);
+
+        $.ajax({
+            type:"get",
+            url:"/case/management/",
+            data:{"projectname":name},
+            dataType:"text",
+            success: function (result) {
+                console.log(result);
+                window.location.href='/case/management/'
+            }
+        })
+    });
+
+    $("#all-project").on("click","#runCase",function () {
+        var name = $(this).attr("name");
+        $.ajax({
+            type:"get",
+            url:"/run/current/project/all/case/",
+            data:{"projectname":name},
+            dataType:"text",
+            success: function (result) {
+                console.log(result);
+                if (result == 'success'){
+                    alert("运行完成，可查看结果");
+                }else if (result == 'noRunCase'){
+                    alert("不存在执行的用例，请到【用例管理】模块修改执行方式");
+                }
+                else if (result == 'caseEmpty'){
+                    alert("不存在用例，请到【用例管理】模块添加");
+                }else {
+                    alert("系统发生了不可知错误，请检查用例")
+                }
+            }
+        })
+    });
+
+
+    $("#all-project").on("click","#checkResult",function () {
+        var name = $(this).attr("name");
+        $.ajax({
+            type:"get",
+            url:"/check/current/run/result/",
+            data:{"projectname":name},
+            dataType:"text",
+            success: function (result) {
+                console.log(result);
+                if(result == 'success'){
+                    //window.parent.location.href="/check/current/run/result/";
+                    window.location.href="/check/current/run/result/";
+                }else {
+                    alert("未执行用例，或不存在用例，请到【用例管理】模块添加");
+                }
+            }
+
+        })
+    });
+</script>
+
+</body>
+</html>

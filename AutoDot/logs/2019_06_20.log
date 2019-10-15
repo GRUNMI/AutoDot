@@ -1,0 +1,30 @@
+2019-06-20 00:10:04,351 - INFO----  当前运行文件：F:/pythonProject/AutoDot/common/ConfigFile.py
+2019-06-20 00:10:04,355 - INFO----  新建配置文件F:\pythonProject\AutoDot\config\test1.ini
+2019-06-20 00:10:04,356 - INFO----  读取配置文件F:\pythonProject\AutoDot\config\test1.ini
+2019-06-20 00:10:04,356 - INFO----  获取配置文件所有sections：[]
+2019-06-20 00:10:04,356 - INFO----  获取配置文件section_name：changeData，不存在，准备创建section_name changeData
+2019-06-20 00:10:04,357 - INFO----  新增配置文件section_name：changeData 成功
+2019-06-20 00:10:20,348 - INFO----  当前运行文件：F:/pythonProject/AutoDot/common/ConfigFile.py
+2019-06-20 00:10:20,350 - INFO----  读取配置文件F:\pythonProject\AutoDot\config\test1.ini
+2019-06-20 00:10:20,351 - INFO----  获取配置文件所有sections：['changeData']
+2019-06-20 00:10:20,351 - INFO----  获取配置文件sections：changeData 下的options：{}
+2019-06-20 00:11:49,646 - INFO----  当前运行文件：F:/pythonProject/AutoDot/common/ConfigFile.py
+2019-06-20 00:11:49,648 - INFO----  读取配置文件F:\pythonProject\AutoDot\config\test1.ini
+2019-06-20 00:11:49,648 - INFO----  获取配置文件所有sections：['changeData']
+2019-06-20 00:11:49,649 - INFO----  获取配置文件sections：changeData 下的options：{'ww': 'Qa'}
+2019-06-20 00:12:11,253 - INFO----  当前运行文件：F:/pythonProject/AutoDot/common/ConfigFile.py
+2019-06-20 00:12:11,255 - INFO----  读取配置文件F:\pythonProject\AutoDot\config\test1.ini
+2019-06-20 00:12:11,255 - INFO----  获取配置文件所有sections：['changeData']
+2019-06-20 00:12:11,256 - INFO----  获取配置文件sections：changeData 下的options：{'ww': 'Qa'}
+2019-06-20 00:12:52,534 - INFO----  当前运行文件：F:/pythonProject/AutoDot/common/ConfigFile.py
+2019-06-20 00:12:52,535 - INFO----  读取配置文件F:\pythonProject\AutoDot\config\test1.ini
+2019-06-20 00:12:52,535 - INFO----  获取配置文件所有sections：['changeData']
+2019-06-20 00:12:52,535 - INFO----  获取配置文件sections：changeData 下的options：{'dw': 'Qa'}
+2019-06-20 00:13:02,757 - INFO----  当前运行文件：F:/pythonProject/AutoDot/common/ConfigFile.py
+2019-06-20 00:13:02,759 - INFO----  读取配置文件F:\pythonProject\AutoDot\config\test1.ini
+2019-06-20 00:13:02,759 - INFO----  获取配置文件所有sections：['changeData']
+2019-06-20 00:13:02,759 - INFO----  获取配置文件sections：changeData 下的options：{'Dw': 'Qa'}
+2019-06-20 00:13:23,317 - INFO----  当前运行文件：F:/pythonProject/AutoDot/common/ConfigFile.py
+2019-06-20 00:13:23,318 - INFO----  读取配置文件F:\pythonProject\AutoDot\config\test1.ini
+2019-06-20 00:13:23,318 - INFO----  获取配置文件所有sections：['changeData']
+2019-06-20 00:13:23,318 - INFO----  获取配置文件sections：changeData 下的options：{'Dw': 'Qa'}

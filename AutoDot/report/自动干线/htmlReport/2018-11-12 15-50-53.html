@@ -1,0 +1,131 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>报告模板</title>
+        <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+        <style>
+            input{
+                color: #fff;
+                width: 90px;
+                height: 30px;
+                border: none;
+                outline:none;
+                border-radius: 5px;
+            }
+            button{
+                background-color: #5bc0de;
+                border: none;
+                outline:none;
+                color: white;
+                border-radius: 5px;
+            }
+            .detail:hover{
+                text-decoration: underline;
+                background-color: #98ff94;
+            }
+        </style>
+    </head>
+    <body>
+    <div style="width: 1000px;">
+        <div style="float: left">
+            <h2>自动干线</h2>
+            <p><strong>测试人员：</strong>GRUNMI</p>
+            <p><strong>开始时间：</strong>2018-11-12 15:50:53</p>
+            <p><strong>合计耗时：</strong>0.07799983024597168</p>
+            <p><strong>测试结果：</strong>共 1，通过 1，失败 0，通过率 100%</p>
+            <p><strong>运行环境：</strong>python3.6.5+django2.0.1</p>
+            <p>测试用例结果</p>
+            <p>
+                <input type="button" style="background-color: #428bca;" value="概要{ 100% }">
+                <input type="button" style="background-color: #5cb85c;" value="成功{ 1 }">
+                <input type="button" style="background-color: #FF0000;" value="失败{ 0 }">
+                <input type="button" style="background-color: #5bc0de;" value="所有{ 1 }">
+            </p>
+        </div>
+        <div style="float: right;margin-top: 60px">
+            <canvas id="circle" width="300" height="200">您的浏览器暂不支持Canvas</canvas>
+            <input type="button" style="background-color: #5cb85c;" value="通过{ 100% }">
+            <input type="button" style="background-color: #FF0000;" value="失败{ 0% }">
+        </div>
+    </div>
+    <div>
+    <table style="width: 100%;">
+        <caption id="cap">
+            <p id="title"></p>
+
+        </caption>
+        <thead id="th">
+        <tr style="background-color: #d7dbdb">
+            <th style="width: 15%">用例名称</th>
+            <th style="width: 15%">用例路径</th>
+            <th style="width: 55%">测试结果</th>
+            <th style="width: 15%">校验详细</th>
+        </tr>
+        </thead>
+        <tbody id="tb" align="center">
+                <tr style="background-color: #d0e9c6">
+                    <td>百度</td>
+                    <td></td>
+                    <td><button>true</button></td>
+                    <td class="detail" style="color: #00AAFF; cursor: pointer">详细</td>
+                </tr>
+                <tr class="content" style="display: none">
+                    <td></td>
+                    <td></td>
+                    <td>
+                        [{&#039;预期结果&#039;: {}}, {&#039;运行结果&#039;: {}}]
+                    </td>
+                </tr>
+
+        </tbody>
+
+        <tfoot id="tf" align="center" style="background-color: #d3d3d3">
+        <tr style="font-weight: bold;font-size: small">
+            <td>统计</td>
+            <td>总计{ 1 }</td>
+            <td>通过{ 1 }&emsp;&emsp;失败{ 0 }</td>
+            <td>通过率{ 100% }</td>
+        </tr>
+        </tfoot>
+    </table>
+    </div>
+    </body>
+
+    <script type="text/javascript">
+
+        var color = ["#5cb85c","#FF0000"];
+        var data = [1,0];
+        //var text = ["成功","失败"];
+        var sumData = 1;
+        var beginAngle = 0;
+        var endAngle = 0;
+        function drawCircle(){
+            var canvas = document.getElementById("circle");
+            var ctx = canvas.getContext("2d");
+            for(var i=0;i<data.length;i++){
+                //绘制饼形图
+                ctx.fillStyle = color[i];
+                ctx.strokeStyle = color[i];
+                beginAngle = endAngle;
+                endAngle = beginAngle + Math.PI*2*(data[i]/sumData);
+                ctx.beginPath();
+                ctx.moveTo(100,100);
+                ctx.arc(100,100,100,beginAngle,endAngle);
+                ctx.fill();
+                ctx.stroke();
+                }
+        }
+        drawCircle();
+
+        $("#tb").on("click",".detail",function () {
+            var hideContent = $(this).parent().next();
+            if (hideContent.is(':hidden')){
+                hideContent.show();
+            }else{
+                hideContent.hide();
+            }
+        })
+    </script>
+    </html>

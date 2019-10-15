@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AutoDot</title>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="/static/css/menu.css" type="text/css">
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/static/js/navigation-content.js"></script>
+</head>
+<body>
+<div id="nav">
+    <input hidden="hidden" value = "" id="parm" />
+    <ul class="menu">
+        <li>
+            <div onclick="index()" style="cursor: pointer">首页</div>
+        </li>
+        <li>
+            <div onclick="singleInterface()" style="cursor: pointer">单接口测试</div>
+        </li>
+        <li>
+            <div onclick="projectList()" style="cursor: pointer">项目列表</div>
+        </li>
+        <li>
+            <div>用例管理</div>
+            <ul class="sub-menu" style="cursor: pointer">
+                    {% for name in projectName %}
+                     <li>
+                        <span onclick="caseManagement('{{ name }}')">{{ name }}</span>
+                     </li>
+                     {% endfor %}
+            </ul>
+        </li>
+        <li>
+            <div>场景测试</div>
+            <ul class="sub-menu" style="cursor: pointer">
+                    {% for name in projectName %}
+                     <li>
+                        <span onclick="settingTest('{{ name }}')">{{ name }}</span>
+                     </li>
+                     {% endfor %}
+            </ul>
+        </li>
+        <li>
+            <div>测试报告</div>
+            <ul class="sub-menu" style="cursor: pointer">
+                    {% for name in projectName %}
+                     <li>
+                        <span onclick="testReport('{{ name }}')">{{ name }}</span>
+                     </li>
+                     {% endfor %}
+            </ul>
+
+        </li>
+
+        <li>
+            <div>环境配置</div>
+            <ul class="sub-menu" style="cursor: pointer">
+                    {% for name in projectName %}
+                     <li>
+                        <span onclick="environmentConfig('{{ name }}')">{{ name }}</span>
+                     </li>
+                     {% endfor %}
+            </ul>
+
+        </li>
+
+    </ul>
+</div>
+
+
+<iframe name="myiframe" id="myiframe" style="padding-top: 50px;margin-bottom: 20px" width=100% src="/index/" align="center" frameborder="0" height=85%></iframe>
+
+</body>
+
+</html>

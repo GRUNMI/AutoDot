@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+    <meta charset="UTF-8">
+    <title>测试报告</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #title{
+            text-align: center;
+            font-size: 30px;
+            color: coral;
+            border-bottom: 2px dotted #ffa414;;
+        }
+        .report-box{
+            margin-left: 30%;
+            margin-right: 30%;
+        }
+        #report{
+            width: 100%;
+            list-style: none
+        }
+    </style>
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+</head>
+<body>
+<div>
+    <div id="title">
+{#        <h3>hah</h3>#}
+    </div>
+    <div class="report-box">
+        <ul id="report">
+{#            <li>hah<span style="float: right;color: blue; cursor: pointer">查看</span></li>#}
+{#            <li>h沃尔沃若付翁热无热ah<span style="float: right;color: blue; cursor: pointer">查看</span></li>#}
+        </ul>
+    </div>
+
+</div>
+
+<script>
+    var ht = $('#parm', window.parent.document).val();
+
+    window.onload=getProjectAllReport();
+    function getProjectAllReport() {
+        $.ajax({
+            type:"get",
+            url:"/get/project/all/report/",
+            data:{"projectName": ht},
+            dataType:"json",
+            success: function (result) {
+                console.log(result);
+                // 项目名称
+                var title = "";
+                title += result.projectname;
+                $("#title").html(title);
+
+                // 报告
+                var allreport = result.report;
+                if (allreport.length>0){
+                    var report = "";
+                    $.each(allreport, function (index, val) {
+                        report += '<li id="reportname">'+val.name+'<span id="checkreport" style="float: right;color: blue; cursor: pointer" reportname='+val.name+'>查看报告</span></li>'
+                    });
+                    $("#report").html(report)
+                }
+            }
+        })
+    }
+
+    $("#report").on("click","#checkreport",function () {
+        var reportName = $(this).parent().text();
+        $.ajax({
+            type:"get",
+            url:"/check/report/",
+            data:{"projectName": ht, "reportName": reportName},
+            dataType:"text",
+            success: function (result) {
+                console.log(result);
+                //window.parent.location.href="/check/report/";
+                window.location.href="/check/report/";
+            }
+        })
+    })
+
+</script>
+</body>
+</html>

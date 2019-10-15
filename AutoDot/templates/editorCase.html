@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+    <meta charset="UTF-8">
+    <title>修改用例</title>
+
+    <style>
+        .case{
+            margin: 0 auto;
+            line-height: 50px;
+            text-align: center;
+        }
+        div ul{
+            list-style: none;
+        }
+        span{
+            color: red;
+        }
+        .sql{
+            width: 763px;
+            height: 25px;
+        }
+        .path{
+            width:300px;
+        }
+        .data{
+            width: 400px;
+            height: 100px;
+        }
+        .changeData{
+            width: 480px;
+            height: 30px;
+        }
+        .expect {
+            width: 720px;
+            height: 280px;
+        }
+    </style>
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/static/js/InfoHint.js"></script>
+    <script>
+		function sel(){
+            if(document.getElementById("sel-method").value=='GET'){
+                document.getElementById("header").style.display='none';
+            }else if(document.getElementById("sel-method").value=='POST'){
+                document.getElementById("header").style.display='';
+            }
+		}
+
+        function hideContentType() {
+            if(document.getElementById("sel-method").value=='GET'){
+                document.getElementById("header").style.display='none';
+            }else if(document.getElementById("sel-method").value=='POST'){
+                document.getElementById("header").style.display='none';
+            }
+        }
+
+        function interfaceTest() {
+            $.ajax({
+                type:'get',
+                dataType:'text',
+                url:"/editor/page/api/test/",
+                data: $('#saveFrom').serialize(),
+                success: function (result) {
+                    console.log(result);//打印服务端返回的数据(调试用)
+                    $(".expect").text(result);
+                },
+                error : function(result) {
+                    console.log(result);
+                    $(".expect").text(result);
+                    alert("异常！");
+                }
+            });
+        }
+
+        function saveInterfaceData() {
+            $.ajax({
+                type:'get',
+                dataType:'text',
+                url:"/save/editor/case/",
+                data: $('#saveFrom').serialize(),
+                success: function (result) {
+                    console.log(result);//打印服务端返回的数据(调试用)
+                    if (result == 'success'){
+                        //alert("保存成功！")
+                        window.location.href=("/case/management/");
+                    }else if (result == 'dataError'){
+                        infoHint("必填项不能为空！");
+                        //alert("必填项不能为空！");
+                    }
+                    else {
+                        infoHint("保存动态参数字段数量一致，或响应结果不存在该参数，请检查！");
+                        //alert("保存动态参数字段数量一致，或响应结果不存在该参数，请检查！");
+                    }
+                },
+                error: function(result) {
+                    console.log(result);
+                    infoHint("异常！请检查数据");
+                    //alert("异常！请检查数据");
+                }
+            });
+        }
+	</script>
+</head>
+<body>
+<div align="center">
+    修改<span>{{ editor.projectname }}</span>项目第条<span>{{ editor.sort }}</span>用例
+</div>
+
+<div class="case">
+    <form id="saveFrom">
+        <input hidden=hidden" name="projectName" value="{{ editor.projectname }}">
+        <input hidden=hidden" name="id" value="{{ editor.id }}">
+        <div>
+            <span>*</span>用例模块：
+            {% if editor.moduleName == None %}
+                <input type="text" value="" name="moduleName">
+            {% else %}
+                <input type="text" value="{{ editor.moduleName }}" name="moduleName">
+            {% endif %}
+            <span>*</span>用例名称：
+            {% if editor.caseName == None %}
+                <input type="text" value="" name="caseName">
+            {% else %}
+                <input type="text" value="{{ editor.caseName }}" name="caseName">
+            {% endif %}
+            <span>*</span>用例描述：
+            {% if editor.caseDescription == None %}
+                <input type="text" value="" name="caseDescription">
+            {% else %}
+                <input type="text" value="{{ editor.caseDescription }}" name="caseDescription">
+            {% endif %}
+        
+        </div>
+
+        <div>
+            SQL
+            {% if editor.sql == None %}
+                <textarea name="sql" class="sql" placeholder="select name from persons,select age from persons"></textarea>
+            {% else %}
+                <textarea name="sql" class="sql" placeholder="select name from persons,select age from persons">{{ editor.sql }}</textarea>
+            {% endif %}
+        </div>
+
+        <div>
+            <span>*</span>Host：
+            <select name="protocol">
+                <option {% if editor.protocol == 'http://' %} selected {% endif %} value="http://">HTTP</option>
+                <option {% if editor.protocol == 'https://' %} selected {% endif %} value="https://">HTTPS</option>
+            </select>
+        
+            {% if editor.host == None %}
+                <input type="text" class="host" name="host" value="">
+            {% else %}
+                <input type="text" class="host" name="host" value="{{ editor.host }}">
+            {% endif %}
+            
+            <select id="sel-method" onchange="sel()" name="method">
+                <option {% if editor.method == 'GET' %} selected {% endif %} value="GET">GET</option>
+                <option {% if editor.method == 'POST' %} selected {% endif %} value="POST">POST</option>
+            </select>
+            
+            {% if editor.path == None %}
+                <label>路径：<input type="text" name="path" class="path" value=""></label>
+            {% else %}
+                <label>路径：<input type="text" name="path" class="path" value="{{ editor.path }}"></label>
+            {% endif %}
+        
+        </div>
+        <div id="header" style="display: none">
+            <span>*</span><label for="headers">Content-Type：</label>
+            <select id="headers" name="headers">
+                <option {% if editor.headers == 'application/x-www-form-urlencoded' %} selected {% endif %} value="application/x-www-form-urlencoded">application/x-www-form-urlencoded</option>
+                <option {% if editor.headers == 'application/json;charset=UTF-8' %} selected {% endif %} value="application/json;charset=UTF-8">application/json</option>
+                <option {% if editor.headers == 'multipart/form-data' %} selected {% endif %} value="multipart/form-data">multipart/form-data</option>
+                <option {% if editor.headers == 'text/html' %} selected {% endif %} value="text/html">text/html</option>
+            </select>
+        </div>
+        <div>
+            请求数据：
+            {% if editor.data == None %}
+                <textarea placeholder={"name":1} class="data" name="data" ></textarea>
+            {% else %}
+                <textarea placeholder={"name":1} class="data" name="data" >{{ editor.data }}</textarea>
+            {% endif %}
+        </div>
+        <div>
+            已存在动态字段数据：
+
+            <textarea class="changeData" readonly>{{ editor.changeData }}</textarea>
+
+        </div>
+        <div>
+            替换动态字段：
+            {% if editor.replaceID == None %}
+                <input class="replaceID" name="replaceID" placeholder="name,age,sex" value="">
+            {% else %}
+                <input class="replaceID" name="replaceID" placeholder="name,age,sex" value="{{ editor.replaceID }}">
+            {% endif %}
+        </div>
+
+        <div>
+            <input type="button" value="执行测试" onclick="interfaceTest()">
+            <input type="reset" value="清空数据" onclick="hideContentType()">
+        </div>
+
+        <div>
+            <span>*</span>响应结果：
+            {% if editor.expect == None %}
+            <textarea placeholder="" name="expect" class="expect" readonly></textarea>
+            {% else %}
+            <textarea placeholder="" name="expect" class="expect" readonly>{{ editor.expect }}</textarea>
+            {% endif %}
+        </div>
+
+        <div>
+            保存动态参数字段：
+            {% if editor.transmitID == None %}
+                <input type="text" class="transmitID" name="transmitID" value="" placeholder="name,age,sex">
+            {% else %}
+                <input type="text" class="transmitID" name="transmitID" value="{{ editor.transmitID }}" placeholder="name,age,sex">
+            {% endif %}
+
+            保存到目标动态字段：
+            {% if editor.transmitTargetID == None %}
+                <input type="text" class="transmitTargetID" name="transmitTargetID" value="" placeholder="name,age,sex">
+            {% else %}
+                <input type="text" class="transmitTargetID" name="transmitTargetID" value="{{ editor.transmitTargetID }}" placeholder="name,age,sex">
+            {% endif %}
+
+        </div>
+
+        <div>
+            <span>*</span>需要校验的数据：
+            {% if editor.checkPoint == None %}
+                <input type="text" class="checkPoint" name="checkPoint" placeholder="name,age,sex" value="">
+            {% else %}
+                <input type="text" class="checkPoint" name="checkPoint" placeholder="name,age,sex" value="{{ editor.checkPoint }}">
+            {% endif %}
+        </div>
+        <div>
+            <input type="button" value="保存数据" onclick="saveInterfaceData()">
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

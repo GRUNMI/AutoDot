@@ -1,0 +1,16 @@
+table{
+    background-color: #000000;
+    width: 800px;
+}
+table caption h2{
+    color: #00aa00;
+}
+table thead{
+    background-color: #e7c3c3;
+}
+table tbody{
+    background-color: white;
+}
+table tfoot{
+    background-color: white;
+}

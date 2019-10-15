@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+    <meta charset="UTF-8">
+    <title>新增用例</title>
+
+    <style>
+        .case{
+            margin: 0 auto;
+            line-height: 50px;
+            text-align: center;
+        }
+        div ul{
+            list-style: none;
+        }
+        span{
+             color: red;
+        }
+        .sql{
+            width: 763px;
+            height: 25px;
+        }
+        .path{
+            width:300px;
+        }
+        .data{
+            width: 400px;
+            height: 100px;
+        }
+        .changeData{
+            width: 480px;
+            height: 30px;
+        }
+        #expect {
+            width: 720px;
+            height: 280px;
+        }
+
+    </style>
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/static/js/InfoHint.js"></script>
+    <script>
+		function sel(){
+            if(document.getElementById("sel-method").value=='GET'){
+                document.getElementById("header").style.display='none';
+            }else if(document.getElementById("sel-method").value=='POST'){
+                document.getElementById("header").style.display='';
+            }
+		}
+
+        function hideContentType() {
+            if(document.getElementById("sel-method").value=='GET'){
+                document.getElementById("header").style.display='none';
+            }else if(document.getElementById("sel-method").value=='POST'){
+                document.getElementById("header").style.display='none';
+            }
+        }
+
+        function interfaceTest() {
+            $.ajax({
+                type:"get",
+                dataType:"text",
+                url:"/add/page/interface/test/",
+                data: $('#addForm').serialize(),
+                success: function (result) {
+                    //打印服务端返回的数据(调试用)
+                    console.log(result);
+                    $("#expect").text(result);
+                    //alert("在Response中查看结果!");
+
+                },
+                error : function(result) {
+                    //打印服务端返回的数据(调试用)
+                    console.log(result);
+                    $("#expect").text(result);
+                    //alert("异常！请检查数据");
+                }
+            });
+        }
+
+        function saveInterfaceData() {
+            $.ajax({
+                type:"get",
+                dataType:"text",
+                url:"/save/case/",
+                data: $('#addForm').serialize(),
+                success: function (result) {
+                    //打印服务端返回的数据(调试用)
+                    console.log(result);
+                    if(result == 'success'){
+                        //alert("在Response中查看结果!");
+                        window.location.href = "/case/management/";
+                    }else if(result == 'dataError') {
+                        infoHint("必填项不能为空！");
+
+                        //alert("必填项不能为空！")
+                    }
+                    else {
+                        infoHint("保存动态参数字段数量必须一致，请检查！");
+                        //alert("保存动态参数字段数量必须一致，请检查！");
+                    }
+                },
+                error: function(result) {
+                    //打印服务端返回的数据(调试用)
+                    console.log(result);
+                    $("#response").text(result);
+                    infoHint("异常！请检查数据");
+                    //alert("异常！请检查数据");
+                }
+            });
+        }
+	</script>
+</head>
+<body>
+
+<div align="center">
+    新增<span>{{ project.name }}</span>用例
+</div>
+
+<div class="case">
+    <form id="addForm">
+        <input hidden="hidden" value="{{ project.name }}" name="projectName">
+        <div>
+            <span>*</span>用例模块：<input type="text" value="" name="ModuleName">
+            <span>*</span>用例名称：<input type="text" value="" name="CaseName">
+            <span>*</span>用例描述：<input type="text" value="" name="CaseDescription">
+        </div>
+        <div>
+            SQL
+            <textarea name="sql" class="sql" placeholder="select name from persons,select age from persons"></textarea>
+        </div>
+        <div>
+            <span>*</span>Host：
+            <select name="protocol">
+                <option value="http://">HTTP</option>
+                <option value="https://">HTTPS</option>
+            </select>
+            <input type="text" name="host">
+            <select id="sel-method" onchange="sel()" name="method">
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+            </select>
+            路径：<input type="text" name="path" class="path">
+        </div>
+        <div id="header" style="display: none">
+            <span>*</span><label for="headers">Content-Type：</label>
+            <select id="headers" name="headers">
+                <option value="application/x-www-form-urlencoded">application/x-www-form-urlencoded</option>
+                <option value="application/json;charset=UTF-8">application/json</option>
+                <option value="multipart/form-data">multipart/form-data</option>
+                <option value="text/html">text/html</option>
+            </select>
+        </div>
+        <div>
+            请求数据：
+            <textarea placeholder={"name":1} class="data" name="data" ></textarea>
+        </div>
+        <div>
+            已存在动态字段数据：
+            <textarea class="changeData" name="existChangeData" readonly>{{ project.changeData }}</textarea>
+        </div>
+        <div>
+            替换动态字段：
+            <input class="replaceID" name="replaceID" placeholder="name,age,sex">
+        </div>
+
+        <div>
+            <input type="button" value="执行测试" onclick="interfaceTest()">
+            <input type="reset" value="清空数据" onclick="hideContentType()">
+        </div>
+        <div>
+            <span>*</span>响应结果：
+            <textarea placeholder="" name="expect" id="expect" readonly></textarea>
+        </div>
+        <div>
+            保存动态参数字段：
+            <input type="text" class="TransmitID" name="TransmitID" value="" placeholder="name,age,sex">
+            保存到目标动态字段：
+            <input type="text" class="TransmitTargetID" name="TransmitTargetID" value="" placeholder="name,age,sex">
+        </div>
+        <div>
+            <span>*</span>需要校验的数据：
+            <input type="text" class="CheckPoint" name="CheckPoint" placeholder="name,age,sex" value="">
+        </div>
+        <div>
+            <input type="button" value="保存数据" onclick="saveInterfaceData()">
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

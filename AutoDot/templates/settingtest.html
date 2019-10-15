@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+    <meta charset="UTF-8">
+    <title>场景测试</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .content{
+            border-bottom: 1px dotted  #00aa00;
+
+        }
+        .top{
+            margin: 0 auto;
+            text-align: center;
+        }
+        .title{
+            color: #ffdf00;
+            font-size: 30px;
+            margin-right: 30%;
+        }
+        .project-case{
+            float: left;
+            padding-left: 20%;
+            border-right: 1px dotted #000;
+            box-sizing: border-box;
+            width: 50%;
+        }
+        .select-case{
+{#            border: 3px solid #000;#}
+            box-sizing: border-box;
+            width: 50%;
+            float: left;
+            padding-left: 10%;
+        }
+        li{
+            list-style: none;
+        }
+
+
+
+    </style>
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+<div class="content">
+    <div class="top">
+        <span class="title"></span><span style="cursor: pointer;color: coral;margin-right: 30px" id="run">执行场景用例</span>
+        <span id="reportButton"></span>
+    </div>
+
+    <div class="all-case">
+        <div class="project-case">
+            <ul id="project-case">
+                <!--<li><input type="checkbox" class="check" id="111" value="CaseName">CaseName</li>
+                <li><input type="checkbox" class="check" id="222" value="用例名称">用例名称</li>
+                <li><input type="checkbox" class="check" id="333" value="33">33</li>
+                <li><input type="checkbox" class="check" id="444" value="4">4</li>
+                <li><input type="checkbox" class="check" id="555" value="5">5</li>
+                <li><input type="checkbox" class="check" id="666" value="6">6</li>-->
+
+            </ul>
+        </div>
+        <input hidden="hidden" id="caseid" value="">
+        <!--<input class="contents" hidden="hidden">-->
+
+
+        <div class="select-case">
+            <ul id="module-name">
+
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+
+    var ht = $('#parm', window.parent.document).val();
+
+    window.onload=getProjectcase();
+    function getProjectcase() {
+        $.ajax({
+            type:"get",
+            url:"/setting/project/case/",
+            data:{'projectName':ht},
+            dataType:"json",
+            success:function (data) {
+                console.log(data);
+
+                // 项目名称
+                var title="";
+                title += data.name;
+                $(".title").html(title);
+
+                // 项目用例
+
+                var caseArray = data.case;
+                if (caseArray.length>0){
+                    var allcase = "";
+                    $.each(caseArray,function (index,val) {
+                        //console.log(val);
+                        allcase += '<li title="'+val.CaseDescription+'"><input type="checkbox" class="check" id="'+val.ID+'" value="'+val.CaseName+'">'+val.ModuleName+':'+val.CaseName+'</li>';
+                    });
+                    $("#project-case").html(allcase)
+                }
+
+
+            }
+        })
+    }
+
+
+    $("#caseid").val("");
+
+    $("#project-case").on("change", ".check",function () {
+        var ele = this;
+        var val = $(ele).val();
+        //alert(val);
+        var idval = $(ele).attr("id");
+
+        if (this.checked == true){
+            $("#caseid").append(idval+',');
+
+            // 添加li标签
+            document.getElementById("module-name").innerHTML+='<li>'+val+'<input type="button" value="删除" id='+idval+' class="movecase"></li>';
+
+            console.log("勾选caseid："+$("#caseid").text());
+
+        }else {
+            // 取消勾选，删除对应的行数和显示的内容
+            var li = document.getElementById("module-name").getElementsByTagName("li");
+            var input = document.getElementById("module-name").getElementsByTagName("input");
+            for (var m=0;m<=input.length;m++){
+
+                //获取当前caseid中的值
+                var raws = $("#caseid").text();
+
+                // 获取动态的属性值 getAttribute
+                if (input[m].getAttribute("id") == idval ){
+
+                    // 删除对应的id
+                    var result_id = raws.replace(idval+',','');
+                    console.log("取消勾选，最后caseid结果："+result_id);
+                    $("#caseid").html(result_id);
+
+                    //删除对应显示的li标签
+                    li[m].remove();
+
+                    break;
+                }
+            }
+        }
+
+    });
+
+    $("#module-name").on("click", ".movecase",function () {
+        // 获取idval值
+        var idval = $(this).attr("id");
+        console.log("删除caseid值:"+idval);
+        var caseidval = $("#caseid").text();
+
+        //删除input中对应的caseid值
+
+        var result_id = caseidval.replace(idval+',','');
+        $("#caseid").html(result_id);
+        console.log("最后勾选caseid结果："+$("#caseid").text());
+
+        //取消显示删除的行
+        //获取当前标签的父标签parent()
+        var id_li = $(this).parent();
+        id_li.remove();
+
+
+        //取消对应的勾选
+        $('input[id='+idval+']').attr("checked",false);
+
+    });
+
+
+    $(".top").on("click", "#run", function () {
+        //获取勾选的用例id
+        var projectName = ht;
+        var id = $("#caseid").text();
+        //alert(projectName+': '+id);
+        $.ajax({
+            type:"get",
+            url:"/run/setting/test/case/",
+            data:{"projectName":projectName,"id":id},
+            dataType:"text",
+            success: function (data) {
+                console.log(data);
+                if (data == "success"){
+                    var reportButton = "";
+                    reportButton += '<input type="button" value="查看运行报告" style="width: 100px;height: 30px;background-color:red;">';
+                    $("#reportButton").html(reportButton)
+                }
+                else if(data == "selectFalse"){
+                    alert("选择的用例不存在，请重新选择")
+                }
+                else {
+                    alert("未选择用例，请先选择用例")
+                }
+            }
+        })
+    });
+    
+    $(".top").on("click", "#reportButton", function () {
+        // 查看场景运行的结果
+        var projectName = ht;
+
+        $.ajax({
+            type:"get",
+            url:"/check/setting/run/result/",
+            data:{"projectName": projectName},
+            dataType:"text",
+            success: function (result) {
+                console.log(result);
+                if(result == 'success'){
+                    //window.parent.location.href="/check/setting/run/result/";
+                    window.location.href="/check/setting/run/result/";
+                }else {
+                    alert("请检查勾选的用例！");
+                }
+            }
+        })
+    });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+    <meta charset="UTF-8">
+    <title>单接口测试</title>
+
+    <style>
+        .single{
+            margin: 0 auto;
+            line-height: 50px;
+            text-align: center;
+        }
+        div ul{
+            list-style: none;
+        }
+        span{
+            color: red;
+        }
+        .path{
+            width:300px;
+        }
+        .data{
+            width: 400px;
+            height: 100px;
+        }
+        #response {
+            width: 720px;
+            height: 280px;
+        }
+    </style>
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script>
+		function sel(){
+            if(document.getElementById("sel-method").value=='GET'){
+                document.getElementById("header").style.display='none';
+            }else if(document.getElementById("sel-method").value=='POST'){
+                document.getElementById("header").style.display='';
+            }
+		}
+
+        function interfaceTest() {
+            $.ajax({
+                type:"get",
+                dataType:"text",
+                url:"/api/test/",
+                data: $('#interfaceFrom').serialize(),
+                success: function (result) {
+                    console.log(result);//打印服务端返回的数据(调试用)
+                    $("#response").text(result);
+{#                    alert("在Response中查看结果!");#}
+                },
+                error : function(result) {
+                    console.log(result);//打印服务端返回的数据(调试用)
+                    $("#response").text(result);
+{#                    alert("异常！请检查数据");#}
+                }
+            });
+        }
+
+        function hideContentType() {
+            if(document.getElementById("sel-method").value=='GET'){
+                document.getElementById("header").style.display='none';
+            }else if(document.getElementById("sel-method").value=='POST'){
+                document.getElementById("header").style.display='none';
+            }
+        }
+	</script>
+</head>
+<body>
+<div class="single">
+    <form id="interfaceFrom">
+
+        <div>
+            <span>*</span>Host：
+            <select name="protocol">
+                <option value="http://">HTTP</option>
+                <option value="https://">HTTPS</option>
+            </select>
+            <input type="text" name="host">
+            <select id="sel-method" onchange="sel()" name="method">
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+            </select>
+            路径：<input type="text" name="path" class="path">
+        </div>
+        <div id="header" style="display: none">
+            <span>*</span>Content-Type：
+            <select name="headers">
+                <option value="application/x-www-form-urlencoded">application/x-www-form-urlencoded</option>
+                <option value="application/json;charset=UTF-8">application/json</option>
+                <option value="multipart/form-data">multipart/form-data</option>
+                <option value="text/html">text/html</option>
+            </select>
+        </div>
+        <div>
+            请求数据：
+            <textarea placeholder="" class="data" name="data"></textarea>
+        </div>
+        <div>
+            <input type="button" value="执行测试" onclick="interfaceTest()">
+            <input type="reset" value="清空数据" onclick="hideContentType()">
+        </div>
+    </form>
+    <div>
+        响应结果：
+        <textarea placeholder="" name="response" id="response"></textarea>
+    </div>
+</div>
+
+</body>
+</html>

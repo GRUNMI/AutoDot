@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .content{
+            width: 300px;
+            height: 400px;
+            margin: 0 auto;
+            text-align: center;
+            margin-top: 200px;
+        }
+        .input{
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        .error{
+            color: red;
+        }
+        .btn{
+            margin-top: 10px;
+        }
+        .btn input{
+            width: 60px;
+        }
+    </style>
+</head>
+<body>
+<form method="post" action="/login/">
+    <div class="content">
+        <div>
+            <h1>接口自动化平台</h1>
+        </div>
+        <div class="input">
+            <label for="user">账号：</label><input id="user" name="username" type="text" placeholder="username" value="admin"><br>
+            <label for="pwd">密码：</label><input id="pwd" name="password" type="password" placeholder="password" value="admin123">
+        </div>
+        <div class="error">
+            {{ error }}
+        </div>
+        <div class="btn">
+            <input type="submit" value="登录">
+            <input type="button" value="注册">
+        </div>
+    </div>
+    {% csrf_token %}
+</form>
+</body>
+</html>
